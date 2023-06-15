@@ -1080,16 +1080,23 @@ end
 
 function aura_env.checkKey()
     aura_env.tyrannical = false
+    -- start the dungeon modifier at 1
     aura_env.modifier = 1
     
-    local keyLevel, keyAffix = C_ChallengeMode.GetActiveKeystoneInfo()
+    -- grab keystone info 
+    local keyLevel, keyAffixes = C_ChallengeMode.GetActiveKeystoneInfo()
+    
     if keyLevel then
+        -- tyrannical or fortified is first affix
+        local biweeklyAffix = keyAffixes[1]
+        -- source: https://www.wowhead.com/guide/mythic-keystones-and-dungeons
+        -- 20 -> 380% damage and health increase
         local keyMod = C_ChallengeMode.GetPowerLevelDamageHealthMod(keyLevel)
+        -- convert the percentage damage increase to a flat multiplicative value
         aura_env.modifier = aura_env.modifier * (1 + keyMod / 100)
-        for _,affix in pairs(keyAffix) do
-            if affix == 9 then
-                aura_env.tyrannical = true
-            end
+        -- tyrannical id is 9, fortified is id 10
+        if biweeklyAffix == 9 then
+            aura_env.tyrannical = true
         end
     end
 end
