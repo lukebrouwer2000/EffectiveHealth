@@ -1245,25 +1245,25 @@ end
 function aura_env.findTalentRank(spellID)
     -- we use this to search for a given spell based on its ID
 
-    local configId = C_ClassTalents.GetActiveConfigID()
-    local configInfo = C_Traits.GetConfigInfo(configId)
+    local configID = C_ClassTalents.GetActiveConfigID()
+    local configInfo = C_Traits.GetConfigInfo(configID)
     
     -- treeIDs is always size 1
     local treeID = configInfo.treeIDs[1]
     -- grabs all nodes (both class and spec trees)
     local treeNodes = C_Traits.GetTreeNodes(treeID)
     -- for every node 
-    for _,nodeId in pairs(treeNodes) do
+    for _, nodeID in pairs(treeNodes) do
         -- each node consists of at least one entry (one entry per talent)
         -- nodes will contain two entries if it is a choice talent
-        local nodeInfo = C_Traits.GetNodeInfo(configId, nodeId)
-        for _, entryId in pairs(nodeInfo.entryIDs) do
+        local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+        for _, entryID in pairs(nodeInfo.entryIDs) do
             -- each entry has definitions
-            local entryInfo = C_Traits.GetEntryInfo(configId, entryId)
+            local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
             -- each definition is indexed by its ID
-            local defId = entryInfo.definitionID
+            local defID = entryInfo.definitionID
             -- each definition ID we can use to check its spell ID
-            local defInfo = C_Traits.GetDefinitionInfo(defId)
+            local defInfo = C_Traits.GetDefinitionInfo(defID)
     
             if defInfo.spellID == spellID then
                 return nodeInfo.currentRank
