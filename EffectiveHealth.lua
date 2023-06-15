@@ -1095,8 +1095,29 @@ function aura_env.checkKey()
 end
 
 function aura_env.checkTalents()
-    --- Death Knight ---
-    if aura_env.classID == 6 then
+    
+    -- source: https://wowpedia.fandom.com/wiki/ClassId
+    -- warrior
+    if aura_env.classID == 1 then
+        aura_env.seasonedSoldier = IsPlayerSpell(279423)
+        
+    -- paladin
+    elseif aura_env.classID == 2 then
+        
+        
+    -- hunter
+    elseif aura_env.classID == 3 then
+        aura_env.huntersAvoidance = IsPlayerSpell(384799)
+        
+    -- rogue
+    elseif aura_env.classID == 4 then
+        aura_env.elusiveness = IsPlayerSpell(79008)
+        
+    -- priest
+    elseif aura_env.classID == 5 then
+        aura_env.elusiveness = IsPlayerSpell(79008) 
+    -- death knight
+    elseif aura_env.classID == 6 then
         aura_env.necropolis = IsPlayerSpell(206967)
         aura_env.necropolisReduction = 1
         if aura_env.necropolis then
@@ -1108,17 +1129,38 @@ function aura_env.checkTalents()
             end
         end
         aura_env.suppression = IsPlayerSpell(374049)
-        --- Hunter ---
-    elseif aura_env.classID == 3 then
-        aura_env.huntersAvoidance = IsPlayerSpell(384799)
-        --- Rogue ---
-    elseif aura_env.classID == 4 then
-        aura_env.elusiveness = IsPlayerSpell(79008)
-        --- Warlock ---
+    -- hunter
+    elseif aura_env.classID == 7 then
+        
+    -- mage 
+    elseif aura_env.classID == 8 then
+        
+    -- warlock
     elseif aura_env.classID == 9 then
         aura_env.profaneBargain = IsPlayerSpell(389576)
-    elseif aura_env.classID == 1 then
-        aura_env.seasonedSoldier = IsPlayerSpell(279423)
+    -- monk
+    elseif aura_env.classID == 10 then
+        
+    -- druid
+    elseif aura_env.classID == 11 then
+        
+    -- demon hunter
+    elseif aura_env.classID == 12 then
+        
+    -- evoker 
+    elseif aura_env.classID == 13 then
+        aura_env.inherentResistance = IsPlayerSpell(375544)
+        if aura_env.inherentResistance then
+            aura_env.inherentResistanceReduction = 1
+            local rank = aura_env.findTalentRank(375544)
+            if rank == 1 then
+                aura_env.inherentResistanceReduction = aura_env.inherentResistanceReduction * 0.98
+            elseif rank == 2 then 
+                aura_env.inherentResistanceReduction = aura_env.inherentResistanceReduction * 0.96
+            end
+            print(aura_env.inherentResistanceReduction)
+        end
+        
     end
     
     --- Racial ---
@@ -1141,35 +1183,6 @@ function aura_env.checkTalents()
         aura_env.reductionShadow = aura_env.reductionShadow * 0.99
         aura_env.reductionNature = aura_env.reductionNature * 0.99
     end
-end
-
-
-function aura_env.checkModifier(unit, spellDamage, spellId)
-    local damage = spellDamage or 0
-    local multiplier = aura_env.modifier
-    if aura_env.tyrannical then
-        multiplier = multiplier * 1.15
-    end
-    
-    if UnitExists(unit) then
-        if WA_GetUnitDebuff(unit, 209859) then -- Bolster Affix
-            multiplier = multiplier * 1.2
-        elseif WA_GetUnitDebuff(unit, 228318) then -- Raging Affix
-            multiplier = multiplier * 1.5
-            -- elseif spellId == 0 and WA_GetUnitDebuff(unit, 0) then -- Sadana // Dark Communion
-        end
-    end
-    
-    if spellId == 377004 and WA_GetUnitDebuff("player", 397210) then -- Crawth // Sonic Vulnerability
-        local stacks = select(3, WA_GetUnitDebuff("player", 397210))
-        multiplier = multiplier * (1 + 0.5 * (stacks or 1))
-    -- if lava spray and magmatusk has magma tentacle stacks
-    elseif spellId == 375251 and WA_GetUnitBuff("target", 374410) then
-        -- check for the stacks and apply the multiplier to the damage
-        local stacks = select(3, WA_GetUnitBuff("target", 374410))
-        multiplier = multiplier * stacks
-    end
-    return damage * multiplier
 end
 
 function aura_env.findTalentRank(spellID)
