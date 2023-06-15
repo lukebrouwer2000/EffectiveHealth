@@ -1185,6 +1185,56 @@ function aura_env.checkTalents()
     end
 end
 
+function aura_env.checkModifier(unit, spellDamage, spellId)
+    local damage = spellDamage or 0
+    local multiplier = aura_env.modifier
+    if aura_env.tyrannical then
+        multiplier = multiplier * 1.15
+    end
+    
+    if UnitExists(unit) then
+        if WA_GetUnitDebuff(unit, 209859) then -- Bolster Affix
+            multiplier = multiplier * 1.2
+        elseif WA_GetUnitDebuff(unit, 228318) then -- Raging Affix
+            multiplier = multiplier * 1.5
+            -- elseif spellId == 0 and WA_GetUnitDebuff(unit, 0) then -- Sadana // Dark Communion
+        end
+    end
+    print("spell name is ", GetSpellInfo(spellId))
+    -- for crawth (s1)
+    if spellId == 377004 and WA_GetUnitDebuff("player", 397210) then 
+        local stacks = select(3, WA_GetUnitDebuff("player", 397210))
+        multiplier = multiplier * (1 + 0.5 * (stacks or 1))
+        
+        -- s2 dungeons
+        -- if lava spray and magmatusk has magma tentacle stacks
+    elseif spellId == 375251 and WA_GetUnitBuff("target", 374410) then
+        local stacks = select(3, WA_GetUnitBuff("target", 374410))
+        multiplier = multiplier * stacks
+        
+        -- if withered eruption and wratheye has decaying strength stacks
+    elseif spellId == 373960 and WA_GetUnitBuff("target", 374186) then
+        local stacks = select(3, WA_GetUnitBuff("target", 374186))
+        multiplier = multiplier * (1 + 0.05 * (stacks or 1))
+        
+        -- if power surge and irideus has stacks
+    elseif spellId == 384014 and WA_GetUnitBuff("target", 389486) then
+        local stacks = select(3, WA_GetUnitBuff("target", 389486))
+        multiplier = multiplier * (1 + 0.02 * (stacks or 1))
+        
+        -- if overpowering croak and frog has hangry enrage buff
+    elseif spellId == 385181 and WA_GetUnitBuff("target", 385743) then
+        local stacks = select(3, WA_GetUnitBuff("target", 385743))
+        multiplier = multiplier * (1 + 0.5 * (stacks or 1))
+        
+        -- if tempest's fury and tsunami has inundate buff
+    elseif spellId == 388424 and WA_GetUnitBuff("target", 387619) then 
+        local stacks = select(3, WA_GetUnitBuff("target", 387619))
+        multiplier = multiplier * (1 + 0.01 * (stacks or 1))
+        return damage * multiplier
+    end
+end
+
 function aura_env.findTalentRank(spellID)
     local configId = C_ClassTalents.GetActiveConfigID()
     local configInfo = C_Traits.GetConfigInfo(configId)
